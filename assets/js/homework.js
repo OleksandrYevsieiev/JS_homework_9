@@ -3,21 +3,13 @@
 Конструктор класса принимает url по которому запрашивается инфа и метод по которому эту инфу обрабатывать( обычно используем json ). */
 
 class DataLoader {
-  constructor(url, method = "json") {
+  constructor(url, method) {
     this._url = url;
-    if (method === "json") {
-      this._method = async (url) => {
-        const response = await fetch(url);
-        const parsedResponse = await response.json();
-        return parsedResponse;
-      };
-    } else {
-      this._method = method;
-    }
+    this._method = method;
   }
 
   get url() {
-    return this.url;
+    return this._url;
   }
 
   set url(url) {
@@ -32,13 +24,12 @@ class DataLoader {
     return (this._method = m);
   }
 
-  useMethod(value) {
-    if (this.method) {
-      return this.method(value);
-    }
+  async use() {
+    const response = await fetch(this.url);
+    const parsedResponse = await response[this._method]();
+    return parsedResponse;
   }
 }
 
-const loader = new DataLoader();
-loader.useMethod("/users.json");
-console.log(loader.useMethod("/users.json"));
+const loader = new DataLoader("/users.json", "json");
+loader.use();
