@@ -76,6 +76,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       createUserTitle(element.position, "p"),
       createContactBtn()
     );
+
+    card.addEventListener("click", async () => {
+      const responseUserCrads = await fetch("./users.json");
+      const usersData = await responseUserCrads.json();
+      history.replaceState(usersData, null, `?id=${element.id}`);
+    });
+
     return card;
   });
 

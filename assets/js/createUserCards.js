@@ -56,15 +56,6 @@ const createContactBtn = () => {
   const btn = document.createElement("button");
   btn.classList.add("btn");
   btn.textContent = "Connect";
-
-  // btn.addEventListener("click", async () => {
-  //   const responseUserCrads = await fetch("./users.json");
-  //   const usersData = await responseUserCrads.json();
-  //   console.log(usersData);
-  //   usersData.map((element) => {
-  //     history.pushState(null, null, `?id=${element.id}`);
-  //   });
-  // });
   return btn;
 };
 
