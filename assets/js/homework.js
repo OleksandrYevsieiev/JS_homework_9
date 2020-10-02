@@ -1,14 +1,6 @@
 "use strict";
 
-import {
-  createUserCard,
-  createUserImage,
-  createUserName,
-  createUserTitle,
-  createContactBtn,
-  createWebsiteHeader,
-  createLoggedUserContainer,
-} from "./createUserCards.js";
+import * as CardCreator from "./createUserCards.js";
 
 /* Реализовать класс DataLoader. Класс должен являтся абстракцией над fetch'ом.
 Конструктор класса принимает url по которому запрашивается инфа и метод по которому эту инфу обрабатывать( обычно используем json ). */
@@ -58,13 +50,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const loggedUserData = await responseLoggedUser.json();
   const usersData = await responseUserCrads.json();
 
-  const websiteHeader = createWebsiteHeader();
-  const userContainer = createLoggedUserContainer();
+  const websiteHeader = CardCreator.createWebsiteHeader();
+  const userContainer = CardCreator.createLoggedUserContainer();
   websiteHeader.append(userContainer);
 
   function storageAvailable(type) {
     try {
-      var storage = window[type],
+      const storage = window[type],
         x = "__storage_test__";
       storage.setItem(x, x);
       storage.removeItem(x);
@@ -74,27 +66,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  if (storageAvailable("localStorage") && localStorage.length > 0) {
+  if (
+    storageAvailable("localStorage") &&
+    localStorage.position &&
+    localStorage.name &&
+    localStorage.image
+  ) {
     userContainer.append(
-      createUserTitle(localStorage.position, "pHeader"),
-      createUserName(localStorage.name, "h2"),
-      createUserImage(localStorage.image, "imgHeader")
+      CardCreator.createUserTitle(localStorage.position, "pHeader"),
+      CardCreator.createUserName(localStorage.name, "h2"),
+      CardCreator.createUserImage(localStorage.image, "imgHeader")
     );
   } else {
     userContainer.append(
-      createUserTitle(loggedUserData.position, "pHeader"),
-      createUserName(loggedUserData, "h2"),
-      createUserImage(loggedUserData, "imgHeader")
+      CardCreator.createUserTitle(loggedUserData.position, "pHeader"),
+      CardCreator.createUserName(loggedUserData, "h2"),
+      CardCreator.createUserImage(loggedUserData, "imgHeader")
     );
   }
 
   const cardArray = usersData.map((element) => {
-    const card = createUserCard();
+    const card = CardCreator.createUserCard();
     card.append(
-      createUserImage(element, "img"),
-      createUserName(element, "h1"),
-      createUserTitle(element.position, "p"),
-      createContactBtn()
+      CardCreator.createUserImage(element, "img"),
+      CardCreator.createUserName(element, "h1"),
+      CardCreator.createUserTitle(element.position, "p"),
+      CardCreator.createContactBtn()
     );
 
     card.addEventListener("click", async () => {
@@ -107,9 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   if (!storageAvailable("localStorage") || !responseLoggedUser.ok) {
-    throw new Error(
-      "You are not authorized to see the user's list. Log in to continue."
-    );
+    alert("You are not authorized to see the user's list. Log in to continue.");
   } else {
     mainContainer.append(websiteHeader, ...cardArray);
   }
